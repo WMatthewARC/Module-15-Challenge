@@ -1,6 +1,6 @@
 //tile layers
 
-var defultMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+var defaultMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 });
@@ -25,8 +25,8 @@ let topoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
 
 
 //make a basemap object
-let basemaps= {
-    Defult: defultMap,
+let basemaps = {
+    Default: defaultMap,
     Grayscale: grayscale,
     "Topography": topoMap,
 };
@@ -37,12 +37,12 @@ let basemaps= {
 var myMap = L.map("map", {
     center:[36.1656, -119.9001],
     zoom: 3,
-    layers: [defultMap, grayscale, topoMap]
+    layers: [defaultMap, grayscale, topoMap]
 });
 
 
-//add defult map
-defultMap.addTo(myMap);
+//add default map
+defaultMap.addTo(myMap);
 
 
 //get the data for the tect plates and draw on the map
@@ -73,16 +73,16 @@ let earthquakes = new L.layerGroup();
 //call the USGA geoJSOn API
 d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson")
 .then(
-    function(earthquakeData){
+    function(earthquakeData) {
         //console log to check
-        //console.log(earthquakeData);
+        console.log(earthquakeData.features[0]);
 
         //plot circles for earthquakes and color is depdent on depth
-        function dataColor(depth){
+        function dataColor(depth) {
             if (depth > 90)
                 return "red";
             else if(depth > 70)
-                return "#fc8403";
+                return "#fc4903";
             else if(depth > 50)
                 return "#fc8403";
             else if(depth > 30)
@@ -94,33 +94,39 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojs
         }
         
         // Function for the size of the circles 
-        function radiusSize(mag){
+        function radiusSize(mag) {
             if (mag == 0)
                 return 1; //make mag 0
             else
                 return mag * 5;
         }
         // adding style to circles
-        function dataStyle(feature)
-        {
+        function dataStyle(feature) {
             return{
                 opacity: 1,
-                fillOpacity: 1,
+                fillOpacity: .5,
                 fillColor: dataColor(feature.geometry.coordinates[2]),
                 color: "0000000",
-                radius: radiusSize(features.properties.mag),
+                radius: radiusSize(feature.properties.mag),
                 weight: 0.5
-
             }
         }
 
         //add the GeoJson
         L.geoJson(earthquakeData, {
-
+            pointToLayer: function(feature, latLng) {
+                return L.circleMarker(latLng);
+            },
+            style: dataStyle,
+            onEachFeature: function(feature, layer) {
+                layer.bindPopup(`Magnitude: <b>${feature.properties.mag}</b><br>
+                Depth: <b>${feature.geometry.coordinates[2]}</b><br>
+                Location: <b>${feature.properties.place}</b>`);
+            }
         }).addTo(earthquakes);
-
     }
 );
+earthquakes.addTo(myMap);
 
 
 
@@ -128,11 +134,34 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojs
 
 // add the overlay for the plates and earthquakes
 let overlays = {
-    "Tectonic Plates": tectonicplates
+    "Tectonic Plates": tectonicplates,
+    "Earthquakes": earthquakes
 };
+
+
+// add legend
+let legend = L.control({
+    position: "bottomright"
+});
+
+legend.onAdd = function() {
+    let div = L.DomUtil.create("div", "info legend");
+
+    let intervals = [-10, 10, 30, 50, 70, 90];
+    let colors = ["green", "#cafc03", "#fcad03", "#fc8403", "#fc4903", "red"];
+
+    for(var i=0; i<intervals.length; i++) {
+        let span = `<span class="legend-icon" style="background-color:${colors[i]}"></span>`;
+        let interval = intervals[i] + (intervals[i+1] ? "km - " + intervals[i+1] + "km<br>" : "+");
+        div.innerHTML += `<div class="legend-row">${span}&nbsp;${interval}</div>`;
+    }
+    return div;
+}
+
+legend.addTo(myMap);
+
 
 //add the layer control
 L.control
     .layers(basemaps, overlays)
     .addTo(myMap);
-
