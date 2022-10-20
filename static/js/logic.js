@@ -7,8 +7,7 @@ var defultMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 //make a map object
 var myMap = L.map("map", {
-
-    center:[32.1656, 82.9001]
+    center:[32.1656, 82.9001],
     zoom: 3
 });
 
