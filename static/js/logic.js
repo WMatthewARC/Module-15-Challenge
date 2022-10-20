@@ -5,7 +5,6 @@ var defultMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 });
 
-
 //make a map object
 var myMap = L.map("map", {
 
