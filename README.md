@@ -106,28 +106,25 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojs
 #### 4. Add a legend
 
 - ![Legend](https://user-images.githubusercontent.com/30300016/197086154-5776d2e9-5c56-4fe0-92be-2798158af686.JPG)
-- ````
-// add legend
-let legend = L.control({
-    position: "bottomright"
-});
+-  ````
+        // add legend
+        let legend = L.control({
+            position: "bottomright"
+        });
 
-legend.onAdd = function() {
-    let div = L.DomUtil.create("div", "info legend");
+        legend.onAdd = function() {
+            let div = L.DomUtil.create("div", "info legend");
 
-    let intervals = [-10, 10, 30, 50, 70, 90];
-    let colors = ["green", "#cafc03", "#fcad03", "#fc8403", "#fc4903", "red"];
+            let intervals = [-10, 10, 30, 50, 70, 90];
+            let colors = ["green", "#cafc03", "#fcad03", "#fc8403", "#fc4903", "red"];
 
-    for(var i=0; i<intervals.length; i++) {
-        let span = `<span class="legend-icon" style="background-color:${colors[i]}"></span>`;
-        let interval = intervals[i] + (intervals[i+1] ? "km - " + intervals[i+1] + "km<br>" : "+");
-        div.innerHTML += `<div class="legend-row">${span}&nbsp;${interval}</div>`;
-    }
-    return div;
-}
+            for(var i=0; i<intervals.length; i++) {
+                let span = `<span class="legend-icon" style="background-color:${colors[i]}"></span>`;
+                let interval = intervals[i] + (intervals[i+1] ? "km - " + intervals[i+1] + "km<br>" : "+");
+                div.innerHTML += `<div class="legend-row">${span}&nbsp;${interval}</div>`;
+            }
+            return div;
+        }
 
-legend.addTo(myMap);
-
-````
-
-
+        legend.addTo(myMap);
+        
