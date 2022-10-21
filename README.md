@@ -127,4 +127,11 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojs
         }
 
         legend.addTo(myMap);
-        
+    
+    ````  
+
+### :octocat: “The dog got into the fried chicken, we forgot the sunscreen, and the kids started whining at the end, but all in all the picnic was a success.”
+    
+![Capture005](https://user-images.githubusercontent.com/30300016/197086974-7bfa4f52-2214-4131-bc28-9014eb327820.JPG)
+   
+   ## Thank you for your time and review.
