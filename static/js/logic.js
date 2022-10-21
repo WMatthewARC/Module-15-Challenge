@@ -49,7 +49,7 @@ defaultMap.addTo(myMap);
 //variable to hold the tect plates layer
 let tectonicplates = new L.layerGroup();
 
-//call the api to site
+//Go get Tectonic Plates data and format
 d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json")
 .then(function(plateData){
     //console log to check
@@ -59,7 +59,7 @@ d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/
     L.geoJson(plateData,{
         //add style to make lines visible
         color: "yellow",
-        weight: 1
+        weight: 4
     }).addTo(tectonicplates);
 });
 
@@ -69,8 +69,7 @@ tectonicplates.addTo(myMap);
 // variable to hold the earthquake data layer
 let earthquakes = new L.layerGroup();
 
-// go get data for eathquake and populate thelayer
-//call the USGA geoJSOn API
+// Go get data for eathquake and populate the layer
 d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson")
 .then(
     function(earthquakeData) {
