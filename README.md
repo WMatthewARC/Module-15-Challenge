@@ -8,27 +8,126 @@ The USGS is interested in building a new set of tools that will allow them to vi
 
 
 -----------
-Part 1: Create the Earthquake Visualization
-
-
-
-1. Get your dataset. To do so, follow these steps:
 
 
 
 
-2. Import and visualize the data by doing the following:
+### Part 1: Create the Earthquake Visualization
+
+#### 1. Get your dataset
+
+  - Tectonic Plates -> https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json
+  
+  - Eathquakes -> https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+
+
+#### 2. Import and visualizes
+
+
+ ````
+//Go get Tectonic Plates data and format
+
+d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json")
+.then(function(plateData){
+
+    L.geoJson(plateData,{
+        //add style to make lines visible
+        color: "yellow",
+        weight: 4
+    }).addTo(tectonicplates);
+});
+
+
+//Go get data for eathquake and format
+
+d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson")
+.then(
+    function(earthquakeData) {
+
+        function dataColor(depth) {
+            if (depth > 90)
+                return "red";
+            else if(depth > 70)
+                return "#fc4903";
+            else if(depth > 50)
+                return "#fc8403";
+            else if(depth > 30)
+                return "#fcad03";
+            else if(depth > 10)
+                return "#cafc03";
+            else 
+                return "green"; 
+        }
+        
+        function radiusSize(mag) {
+            if (mag == 0)
+                return 1; //make mag 0
+            else
+                return mag * 5;
+        }
+        function dataStyle(feature) {
+            return{
+                opacity: 1,
+                fillOpacity: .5,
+                fillColor: dataColor(feature.geometry.coordinates[2]),
+                color: "0000000",
+                radius: radiusSize(feature.properties.mag),
+                weight: 0.5
+            }
+        }
+````
+
+
+#### 3. Earthquake Visualization
+![Capture001](https://user-images.githubusercontent.com/30300016/197085636-b3ecc3ca-be31-4af2-8807-259449fa77b0.JPG)
 
 
 
+### Part 2: Gather and Plot More Data (Optional)
 
-Part 2: Gather and Plot More Data (Optional)
+#### 1. Plot the tectonic plates dataset on the map in addition to the earthquakes
+  ![Capture002](https://user-images.githubusercontent.com/30300016/197085791-f43531a5-fa1f-4904-a182-e8f37a98a73e.JPG)
 
 
-1. Plot the tectonic plates dataset on the map in addition to the earthquakes.
+#### 2. Add other base maps
 
-2. Add other base maps to choose from.
+ - Grayscale   
+    ![Capture004](https://user-images.githubusercontent.com/30300016/197085149-fd4d44f6-54d0-4361-8481-94388ae482ce.JPG)
 
-3. Put each dataset into separate overlays that can be turned on and off independently.
+ - Topography
+     ![Capture003](https://user-images.githubusercontent.com/30300016/197085156-35b13113-b35a-42ec-8884-2cacd92f48b0.JPG)
 
-4. Add layer controls to your map.
+
+
+#### 3. Put each dataset into separate overlays that can be turned on and off independently.
+
+  ![icon options](https://user-images.githubusercontent.com/30300016/197085995-695e201f-b38f-4756-b602-b422f20d2a5a.JPG)
+
+#### 4. Add a legend
+
+- ![Legend](https://user-images.githubusercontent.com/30300016/197086154-5776d2e9-5c56-4fe0-92be-2798158af686.JPG)
+- ````
+// add legend
+let legend = L.control({
+    position: "bottomright"
+});
+
+legend.onAdd = function() {
+    let div = L.DomUtil.create("div", "info legend");
+
+    let intervals = [-10, 10, 30, 50, 70, 90];
+    let colors = ["green", "#cafc03", "#fcad03", "#fc8403", "#fc4903", "red"];
+
+    for(var i=0; i<intervals.length; i++) {
+        let span = `<span class="legend-icon" style="background-color:${colors[i]}"></span>`;
+        let interval = intervals[i] + (intervals[i+1] ? "km - " + intervals[i+1] + "km<br>" : "+");
+        div.innerHTML += `<div class="legend-row">${span}&nbsp;${interval}</div>`;
+    }
+    return div;
+}
+
+legend.addTo(myMap);
+
+````
+
+
